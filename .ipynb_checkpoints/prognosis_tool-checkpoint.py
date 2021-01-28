@@ -14,6 +14,22 @@ def preprocessing(df, return_df = False):
     if return_df == True:
         return categorical, numerical
 
+    
+        
+def missing(self, df):
+        import seaborn as sns
+        #frac_missing = df.isnull().sum()/len(df)
+        percent_missing = df.isnull().sum()*100/len(df)
+        return percent_missing.sort_values(ascending=False), sns.heatmap(df.isnull(), cbar=False)
+    
+    
+def mean_imputer(self, df):
+        '''This func takes dataset with missing values, 
+            and impute them with mean values'''
+        from sklearn.impute import SimpleImputer
+        mean_imputer = SimpleImputer(missing_values=np.NaN, strategy='mean')
+        imputed_df = mean_imputer.fit_transform(df)
+        return imputed_df    
 
 def regression_imputer(df):
     '''This func takes dataset with missing values, 
@@ -234,3 +250,28 @@ def holdout_grid_search(clf, X_train, y_train, X_val, y_val, hyperparams, fixed_
     best_hyperparams.update(fixed_hyperparams)
     
     return best_estimator, best_hyperparams
+
+
+def grid_search_temp():
+
+    # Define ranges for the chosen random forest hyperparameters 
+    hyperparams = { \
+        'n_estimators': [10, 20, 30,],
+        'max_depth': [ 50, 100],
+        'min_samples_leaf': [8, 10, 15, 20, 25],
+    }    
+    fixed_hyperparams = {
+        'random_state': 10,}   
+    rf = RandomForestClassifier
+    best_rf, best_hyperparams = holdout_grid_search(rf, X_train_dropped, y_train_dropped,
+                                                    X_val_dropped, y_val_dropped, hyperparams,
+                                                    fixed_hyperparams)
+
+    print(f"Best hyperparameters:\n{best_hyperparams}")
+    y_train_best = best_rf.predict_proba(X_train_dropped)[:, 1]
+    print(f"Train C-Index: {cindex(y_train_dropped, y_train_best)}")
+    y_val_best = best_rf.predict_proba(X_val_dropped)[:, 1]
+    print(f"Val C-Index: {cindex(y_val_dropped, y_val_best)}")
+    # add fixed hyperparamters to best combination of variable hyperparameters
+    best_hyperparams.update(fixed_hyperparams)
+    return best_rf, best_hyperparams

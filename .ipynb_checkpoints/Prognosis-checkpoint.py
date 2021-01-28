@@ -41,6 +41,13 @@ class Pregnosis:
         imputed_df = reg_imputer.fit_transform(df)
         return imputed_df
     
+    def new(self, df):
+        # Impute using regression on other covariates
+        imputer = IterativeImputer(random_state=0, sample_posterior=False, max_iter=1, min_value=0)
+        imputer.fit(X_train)
+        X_train_imputed = pd.DataFrame(imputer.transform(X_train), columns=X_train.columns)
+        X_val_imputed = pd.DataFrame(imputer.transform(X_val), columns=X_val.columns)
+    
     def logistic_classification(self, df, targe_variable):
         '''This func split data into train and test, then train into train and valid
             to cross-validate with grid-search and return the algorithm?'''
