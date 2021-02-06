@@ -16,14 +16,14 @@ def preprocessing(df, return_df = False):
 
     
         
-def missing(self, df):
+def missing(df):
         import seaborn as sns
         #frac_missing = df.isnull().sum()/len(df)
         percent_missing = df.isnull().sum()*100/len(df)
         return percent_missing.sort_values(ascending=False), sns.heatmap(df.isnull(), cbar=False)
     
     
-def mean_imputer(self, df):
+def mean_imputer(df):
         '''This func takes dataset with missing values, 
             and impute them with mean values'''
         from sklearn.impute import SimpleImputer
